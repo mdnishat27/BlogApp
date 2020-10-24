@@ -36,6 +36,7 @@ const HomeScreen = (props) => {
             let newpost = {
               user: auth.CurrentUser,
               time: 'Posted on ' + moment().format('DD MMM, YYYY'),
+              currenttime: moment().format('YYYY-MM-DD hh:mm:ss a'),
               body: post,
             };
             if (posts == undefined) {
@@ -64,7 +65,7 @@ const HomeScreen = (props) => {
   return (
     <AuthContext.Consumer>
       {(auth) => (
-        <SafeAreaView style={styles.viewStyle}>
+        <View style={styles.viewStyle}>
           <HeaderHome
             DrawerFunction={() => {
               props.navigation.toggleDrawer();
@@ -79,11 +80,13 @@ const HomeScreen = (props) => {
                   author={item.user.name}
                   title={item.time}
                   body={item.body}
+                  navigation={props.navigation}
+                  post={item}
                 />
               );
             }}
           />
-        </SafeAreaView>
+        </View>
       )}
     </AuthContext.Consumer>
   );

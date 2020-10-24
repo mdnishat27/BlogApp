@@ -13,17 +13,44 @@ import NotificationScreen from './src/screens/NotificationScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import SignUpScreen from './src/screens/SignUpScreen';
 import SignInScreen from './src/screens/SignInScreen';
+import PostScreen from './src/screens/PostScreen';
 
 const AuthStack = createStackNavigator();
 const HomeTab = createMaterialBottomTabNavigator();
 const AppDrawer = createDrawerNavigator();
+const PostStack = createStackNavigator();
 
 const AppDrawerScreen = () => {
   return (
     <AppDrawer.Navigator>
-      <AppDrawer.Screen name="Home" component={HomeTabScreen} />
-      <AppDrawer.Screen name="Profile" component={ProfileScreen} />
+      <AppDrawer.Screen
+        name="Home"
+        component={PostStackScreen}
+        options={{headerShown: false}}
+      />
+      <AppDrawer.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{headerShown: false}}
+      />
     </AppDrawer.Navigator>
+  );
+};
+
+const PostStackScreen = () => {
+  return (
+    <PostStack.Navigator initialRouteName="Home">
+      <PostStack.Screen
+        name="Home"
+        component={HomeTabScreen}
+        options={{headerShown: false}}
+      />
+      <PostStack.Screen
+        name={'Post'}
+        component={PostScreen}
+        options={{headerShown: false}}
+      />
+    </PostStack.Navigator>
   );
 };
 
@@ -34,6 +61,7 @@ const HomeTabScreen = () => {
         name="Home"
         component={HomeScreen}
         options={{
+          headerShown: false,
           tabBarLabel: 'Home',
           tabBarIcon: ({focused}) =>
             focused ? (
@@ -47,6 +75,7 @@ const HomeTabScreen = () => {
         name="Notification"
         component={NotificationScreen}
         options={{
+          headerShown: false,
           tabBarLabel: 'Notifications',
           tabBarIcon: ({focused}) =>
             focused ? (

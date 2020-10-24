@@ -3,7 +3,7 @@ import {View} from 'react-native';
 import {Card, Button, Text, Avatar} from 'react-native-elements';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
-const PostCard = (props) => {
+function PostCard(props) {
   return (
     <Card>
       <View
@@ -35,10 +35,17 @@ const PostCard = (props) => {
           title="  Like (17)"
           icon={<AntDesign name="like2" size={24} color="dodgerblue" />}
         />
-        <Button type="solid" title="Comment (10)" />
+        <Button
+          type="solid"
+          title="Comment (10)"
+          onPress={function () {
+            //console.log(props.post);
+            props.navigation.navigate('Post', props.post);
+          }}
+        />
       </View>
     </Card>
   );
-};
+}
 
 export default PostCard;
