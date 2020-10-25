@@ -15,7 +15,8 @@ import {
 } from '../functions/AsyncStorageFunctions';
 
 const PostScreen = (props) => {
-  //console.log(props.route.params);
+  //console.log('props');
+  //console.log(props);
   let info = props.route.params;
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState([]);
@@ -64,7 +65,7 @@ const PostScreen = (props) => {
             {info.user.name}
           </Text>
         </View>
-        <Text style={{fontStyle: 'italic'}}> {info.time}</Text>
+        <Text style={{fontStyle: 'italic'}}> Posted on {info.time}</Text>
         <Text>{'\n'}</Text>
         <Text
           style={{

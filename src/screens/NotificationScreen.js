@@ -9,7 +9,7 @@ import NotificationCard from '../components/NotificationCard';
 import {getDataJSON} from '../functions/AsyncStorageFunctions';
 
 const NotificationScreen = (props) => {
-  console.log(props);
+  //console.log(props);
   const [notifications, setNotifications] = useState([]);
   const loadNotifications = async () => {
     let allnotifications = await getDataJSON('Notifications');
@@ -42,7 +42,12 @@ const NotificationScreen = (props) => {
             data={notifications}
             renderItem={({item}) => {
               return (
-                <NotificationCard icon={item.icon} notification={item.text} />
+                <NotificationCard
+                  props={props.props}
+                  postid={item.postid}
+                  icon={item.icon}
+                  notification={item.text}
+                />
               );
             }}
           />
