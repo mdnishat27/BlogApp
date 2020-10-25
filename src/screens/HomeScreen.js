@@ -35,8 +35,10 @@ const HomeScreen = (props) => {
           onPress={function () {
             let newpost = {
               user: auth.CurrentUser,
-              time: 'Posted on ' + moment().format('DD MMM, YYYY'),
-              currenttime: moment().format('YYYY-MM-DD hh:mm:ss a'),
+              time: moment().format('DD MMM, YYYY'),
+              postid:
+                auth.CurrentUser.email +
+                moment().format('YYYY-MM-DD hh:mm:ss a'),
               body: post,
             };
             if (posts == undefined) {
@@ -78,7 +80,7 @@ const HomeScreen = (props) => {
               return (
                 <PostCard
                   author={item.user.name}
-                  title={item.time}
+                  title={'Posted on ' + item.time}
                   body={item.body}
                   navigation={props.navigation}
                   post={item}

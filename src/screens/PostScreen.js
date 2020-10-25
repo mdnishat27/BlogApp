@@ -19,20 +19,22 @@ const PostScreen = (props) => {
   let info = props.route.params;
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState([]);
+  const [notifications, setNotifications] = useState([]);
   const [postcomments, setPostComments] = useState([]);
 
   const loadComments = async () => {
     let allcomments = await getDataJSON('Comments');
     setComments(allcomments);
-    setPostComments(
-      allcomments.filter(
-        (el) => el.postid == info.user.email + info.currenttime,
-      ),
-    );
+    setPostComments(allcomments.filter((el) => el.postid == info.postid));
+  };
+  const loadNotifications = async () => {
+    let allnotifications = await getDataJSON('Notifications');
+    setNotifications(allnotifications);
   };
 
   useEffect(() => {
     loadComments();
+    loadNotifications();
   }, []);
 
   const Loadpost = (auth) => {
@@ -91,10 +93,17 @@ const PostScreen = (props) => {
           title="Comment"
           onPress={function () {
             let newcomment = {
-              postid: info.user.email + info.currenttime,
+              postid: info.postid,
               user: auth.CurrentUser,
-              time: 'Commented on ' + moment().format('DD MMM, YYYY'),
+              time: moment().format('DD MMM, YYYY'),
               body: comment,
+            };
+            let newnotification = {
+              icon: {name: 'comment', type: 'font-awesome', color: 'black'},
+              author: auth.CurrentUser,
+              postid: info.postid,
+              postauthor: info.user,
+              text: auth.CurrentUser.name + ' commented on your post',
             };
             if (postcomments == undefined) {
               setPostComments([newcomment]);
@@ -108,6 +117,14 @@ const PostScreen = (props) => {
             } else {
               setComments([...comments, newcomment]);
               addDataJSON('Comments', newcomment);
+            }
+
+            if (notifications == undefined) {
+              setNotifications([newnotification]);
+              storeDataJSON('Notifications', [newnotification]);
+            } else {
+              setNotifications([...notifications, newnotification]);
+              addDataJSON('Notifications', newnotification);
             }
           }}
         />
@@ -132,7 +149,7 @@ const PostScreen = (props) => {
               return (
                 <CommentCard
                   name={item.user.name}
-                  time={item.time}
+                  time={'Commented on ' + item.time}
                   comment={item.body}
                 />
               );

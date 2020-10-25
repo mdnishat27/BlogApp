@@ -54,42 +54,47 @@ const PostStackScreen = () => {
   );
 };
 
-const HomeTabScreen = () => {
+const HomeTabScreen = (props) => {
   return (
-    <HomeTab.Navigator initialRouteName="Home">
-      <HomeTab.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{
-          headerShown: false,
-          tabBarLabel: 'Home',
-          tabBarIcon: ({focused}) =>
-            focused ? (
-              <Entypo name="home" color="white" size={26} />
-            ) : (
-              <AntDesign name="home" color="white" size={22} />
-            ),
-        }}
-      />
-      <HomeTab.Screen
-        name="Notification"
-        component={NotificationScreen}
-        options={{
-          headerShown: false,
-          tabBarLabel: 'Notifications',
-          tabBarIcon: ({focused}) =>
-            focused ? (
-              <Ionicons name="ios-notifications" size={26} color="white" />
-            ) : (
-              <Ionicons
-                name="ios-notifications-outline"
-                size={22}
-                color="white"
-              />
-            ),
-        }}
-      />
-    </HomeTab.Navigator>
+    <AuthContext.Consumer>
+      {(auth) => (
+        <HomeTab.Navigator initialRouteName="Home">
+          <HomeTab.Screen
+            name="Home"
+            component={HomeScreen}
+            options={{
+              headerShown: false,
+              tabBarLabel: 'Home',
+              tabBarIcon: ({focused}) =>
+                focused ? (
+                  <Entypo name="home" color="white" size={26} />
+                ) : (
+                  <AntDesign name="home" color="white" size={22} />
+                ),
+            }}
+          />
+
+          <HomeTab.Screen
+            name="Notification"
+            component={() => <NotificationScreen props={props} user={auth} />}
+            options={{
+              headerShown: false,
+              tabBarLabel: 'Notifications',
+              tabBarIcon: ({focused}) =>
+                focused ? (
+                  <Ionicons name="ios-notifications" size={26} color="white" />
+                ) : (
+                  <Ionicons
+                    name="ios-notifications-outline"
+                    size={22}
+                    color="white"
+                  />
+                ),
+            }}
+          />
+        </HomeTab.Navigator>
+      )}
+    </AuthContext.Consumer>
   );
 };
 

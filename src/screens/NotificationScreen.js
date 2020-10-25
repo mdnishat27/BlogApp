@@ -1,37 +1,51 @@
-import React from 'react';
-import {View, StyleSheet} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, StyleSheet, FlatList} from 'react-native';
+import {useIsFocused} from '@react-navigation/native';
 import {Text, Card, Avatar} from 'react-native-elements';
 
 import HeaderHome from './../components/Header';
-import {AuthContext} from '../providers/AuthProvider';
+import {AuthContext, AuthProvider} from '../providers/AuthProvider';
+import NotificationCard from '../components/NotificationCard';
+import {getDataJSON} from '../functions/AsyncStorageFunctions';
 
 const NotificationScreen = (props) => {
+  console.log(props);
+  const [notifications, setNotifications] = useState([]);
+  const loadNotifications = async () => {
+    let allnotifications = await getDataJSON('Notifications');
+    //setNotifications(allnotifications);
+    setNotifications(
+      allnotifications.filter(
+        (el) =>
+          el.postauthor.email == props.user.CurrentUser.email &&
+          el.author.email != props.user.CurrentUser.email,
+      ),
+    );
+  };
+
+  const isFocused = useIsFocused();
+
+  useEffect(() => {
+    loadNotifications();
+  }, [isFocused]);
+
   return (
     <AuthContext.Consumer>
       {(auth) => (
         <View style={styles.viewStyle}>
           <HeaderHome
             DrawerFunction={() => {
-              props.navigation.toggleDrawer();
+              props.props.navigation.toggleDrawer();
             }}
           />
-          <Card>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
-              <Avatar
-                containerStyle={{backgroundColor: 'cyan'}}
-                rounded
-                icon={{
-                  name: 'thumbs-o-up',
-                  type: 'font-awesome',
-                  color: 'black',
-                }}
-                activeOpacity={1}
-              />
-              <Text style={{paddingHorizontal: 10}}>
-                Pam Beesley Liked Your Post.
-              </Text>
-            </View>
-          </Card>
+          <FlatList
+            data={notifications}
+            renderItem={({item}) => {
+              return (
+                <NotificationCard icon={item.icon} notification={item.text} />
+              );
+            }}
+          />
         </View>
       )}
     </AuthContext.Consumer>
