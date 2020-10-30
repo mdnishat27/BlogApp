@@ -1,15 +1,11 @@
 import React from 'react';
-import {View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {Card, Text, Avatar} from 'react-native-elements';
 
 function CommentCard(props) {
   return (
     <Card>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-        }}>
+      <View style={styles.viewStyle}>
         <Avatar
           containerStyle={{backgroundColor: '#ffab91'}}
           rounded
@@ -28,5 +24,12 @@ function CommentCard(props) {
     </Card>
   );
 }
+
+const styles = StyleSheet.create({
+  viewStyle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+});
 
 export default CommentCard;

@@ -1,16 +1,12 @@
 import React from 'react';
-import {View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {Card, Button, Text, Avatar} from 'react-native-elements';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
 function PostCard(props) {
   return (
     <Card>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-        }}>
+      <View style={styles.viewStyle}>
         <Avatar
           containerStyle={{backgroundColor: '#ffab91'}}
           rounded
@@ -21,10 +17,11 @@ function PostCard(props) {
           {props.author}
         </Text>
       </View>
-      <Text style={{fontStyle: 'italic'}}> {props.title}</Text>
+      <Text style={{fontStyle: 'italic', fontSize: 10}}> {props.title}</Text>
       <Text
         style={{
           paddingVertical: 10,
+          fontSize: 18,
         }}>
         {props.body}
       </Text>
@@ -32,12 +29,12 @@ function PostCard(props) {
       <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
         <Button
           type="outline"
-          title="  Like (17)"
+          title="   Like    "
           icon={<AntDesign name="like2" size={24} color="dodgerblue" />}
         />
         <Button
           type="solid"
-          title="Comment (10)"
+          title="    Comment    "
           onPress={function () {
             //console.log(props.post);
             props.navigation.navigate('Post', props.post);
@@ -47,5 +44,12 @@ function PostCard(props) {
     </Card>
   );
 }
+
+const styles = StyleSheet.create({
+  viewStyle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+});
 
 export default PostCard;

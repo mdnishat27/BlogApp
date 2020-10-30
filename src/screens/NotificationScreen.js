@@ -31,38 +31,30 @@ const NotificationScreen = (props) => {
   }, [isFocused]);
 
   return (
-    <AuthContext.Consumer>
-      {(auth) => (
-        <View style={styles.viewStyle}>
-          <HeaderHome
-            DrawerFunction={() => {
-              props.navigation.toggleDrawer();
-            }}
-          />
-          <FlatList
-            data={notifications}
-            renderItem={({item}) => {
-              return (
-                <NotificationCard
-                  props={props}
-                  postid={item.postid}
-                  icon={item.icon}
-                  notification={item.text}
-                />
-              );
-            }}
-          />
-        </View>
-      )}
-    </AuthContext.Consumer>
+    <View style={styles.viewStyle}>
+      <HeaderHome
+        DrawerFunction={() => {
+          props.navigation.toggleDrawer();
+        }}
+      />
+      <FlatList
+        data={notifications}
+        renderItem={({item}) => {
+          return (
+            <NotificationCard
+              navigation={props.navigation}
+              postid={item.postid}
+              icon={item.icon}
+              notification={item.text}
+            />
+          );
+        }}
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  textStyle: {
-    fontSize: 30,
-    color: 'blue',
-  },
   viewStyle: {
     flex: 1,
   },

@@ -13,9 +13,12 @@ const HeaderHome = (props) => {
             color: '#fff',
             onPress: props.DrawerFunction,
           }}
-          centerComponent={{text: 'The Office', style: {color: '#fff'}}}
+          centerComponent={{
+            text: 'My Blog',
+            style: {fontSize: 20, color: '#fff'},
+          }}
           rightComponent={{
-            icon: 'lock-outline',
+            icon: 'logout',
             color: '#fff',
             onPress: function () {
               auth.setIsLoggedIn(false);

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {Card, Text, Avatar} from 'react-native-elements';
 import {getDataJSON} from '../functions/AsyncStorageFunctions';
 
@@ -23,12 +23,9 @@ function NotificationCard(props) {
     <Card>
       <View
         onStartShouldSetResponder={() =>
-          props.props.navigation.navigate('Post', post)
+          props.navigation.navigate('Post', post)
         }
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-        }}>
+        style={styles.viewStyle}>
         <Avatar
           containerStyle={{backgroundColor: 'cyan'}}
           rounded
@@ -40,5 +37,12 @@ function NotificationCard(props) {
     </Card>
   );
 }
+
+const styles = StyleSheet.create({
+  viewStyle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+});
 
 export default NotificationCard;
