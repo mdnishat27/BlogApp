@@ -1,8 +1,7 @@
 import React, {useState, useEffect} from 'react';
-import {ScrollView, View, StyleSheet, FlatList} from 'react-native';
+import {View, StyleSheet, FlatList} from 'react-native';
 import {Card, Button, Input} from 'react-native-elements';
 import Entypo from 'react-native-vector-icons/Entypo';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import moment from 'moment';
 
 import PostCard from './../components/PostCard';
@@ -95,10 +94,6 @@ const HomeScreen = (props) => {
 };
 
 const styles = StyleSheet.create({
-  textStyle: {
-    fontSize: 30,
-    color: 'blue',
-  },
   viewStyle: {
     flex: 1,
   },

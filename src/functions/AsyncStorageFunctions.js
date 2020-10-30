@@ -32,6 +32,16 @@ const addDataJSON = async (key, value) => {
   }
 };
 
+const mergeDataJSON = async (key, value) => {
+  try {
+    const jsonValue = JSON.stringify(value);
+    await AsyncStorage.mergeItem(key, jsonValue);
+    alert('Data merged Successfully!');
+  } catch (error) {
+    alert(error);
+  }
+};
+
 const getData = async (key) => {
   try {
     let data = await AsyncStorage.getItem(key);
@@ -75,4 +85,5 @@ export {
   getDataJSON,
   removeData,
   addDataJSON,
+  mergeDataJSON,
 };

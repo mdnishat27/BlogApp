@@ -2,11 +2,12 @@ import React, {useState} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {Input, Button, Card} from 'react-native-elements';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import Feather from 'react-native-vector-icons/Feather';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Fontisto from 'react-native-vector-icons/Fontisto';
 
 import {storeDataJSON} from '../functions/AsyncStorageFunctions';
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
 const SignUpScreen = (props) => {
   const [Name, setName] = useState('');
@@ -17,10 +18,10 @@ const SignUpScreen = (props) => {
   return (
     <View style={styles.viewStyle}>
       <Card>
-        <Card.Title>Welcome to AuthApp!</Card.Title>
+        <Card.Title>Welcome to My Blog!</Card.Title>
         <Card.Divider />
         <Input
-          leftIcon={<Ionicons name="ios-person" size={24} color="black" />}
+          leftIcon={<Fontisto name="person" size={24} color="black" />}
           placeholder="Name"
           onChangeText={function (currentInput) {
             setName(currentInput);
@@ -43,7 +44,7 @@ const SignUpScreen = (props) => {
 
         <Input
           placeholder="Password"
-          leftIcon={<Feather name="key" size={24} color="black" />}
+          leftIcon={<Fontisto name="key" size={24} color="black" />}
           secureTextEntry={true}
           onChangeText={function (currentInput) {
             setPassword(currentInput);
@@ -51,7 +52,7 @@ const SignUpScreen = (props) => {
         />
 
         <Button
-          icon={<AntDesign name="user" size={24} color="white" />}
+          icon={<AntDesign name="adduser" size={24} color="white" />}
           title="  Sign Up!"
           type="solid"
           onPress={function () {
@@ -67,7 +68,7 @@ const SignUpScreen = (props) => {
         />
         <Button
           type="clear"
-          icon={<AntDesign name="login" size={24} color="dodgerblue" />}
+          icon={<FontAwesomeIcon name="sign-in" size={24} color="dodgerblue" />}
           title="  Already have an account?"
           onPress={function () {
             props.navigation.navigate('SignIn');
