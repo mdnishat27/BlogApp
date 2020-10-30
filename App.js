@@ -18,14 +18,15 @@ import PostScreen from './src/screens/PostScreen';
 const AuthStack = createStackNavigator();
 const HomeTab = createMaterialBottomTabNavigator();
 const AppDrawer = createDrawerNavigator();
-const PostStack = createStackNavigator();
+const HomeStack = createStackNavigator();
+const NotificationStack = createStackNavigator();
 
 const AppDrawerScreen = () => {
   return (
     <AppDrawer.Navigator>
       <AppDrawer.Screen
         name="Home"
-        component={PostStackScreen}
+        component={HomeTabScreen}
         options={{headerShown: false}}
       />
       <AppDrawer.Screen
@@ -37,64 +38,77 @@ const AppDrawerScreen = () => {
   );
 };
 
-const PostStackScreen = () => {
+const HomeStackScreen = () => {
   return (
-    <PostStack.Navigator initialRouteName="Home">
-      <PostStack.Screen
+    <HomeStack.Navigator initialRouteName="Home">
+      <HomeStack.Screen
         name="Home"
-        component={HomeTabScreen}
+        component={HomeScreen}
         options={{headerShown: false}}
       />
-      <PostStack.Screen
+      <HomeStack.Screen
         name={'Post'}
         component={PostScreen}
         options={{headerShown: false}}
       />
-    </PostStack.Navigator>
+    </HomeStack.Navigator>
+  );
+};
+
+const NotificationStackScreen = () => {
+  return (
+    <NotificationStack.Navigator initialRouteName="Notification">
+      <NotificationStack.Screen
+        name="Notification"
+        component={NotificationScreen}
+        options={{headerShown: false}}
+      />
+      <NotificationStack.Screen
+        name={'Post'}
+        component={PostScreen}
+        options={{headerShown: false}}
+      />
+    </NotificationStack.Navigator>
   );
 };
 
 const HomeTabScreen = (props) => {
   return (
-    <AuthContext.Consumer>
-      {(auth) => (
-        <HomeTab.Navigator initialRouteName="Home">
-          <HomeTab.Screen
-            name="Home"
-            component={HomeScreen}
-            options={{
-              headerShown: false,
-              tabBarLabel: 'Home',
-              tabBarIcon: ({focused}) =>
-                focused ? (
-                  <Entypo name="home" color="white" size={26} />
-                ) : (
-                  <AntDesign name="home" color="white" size={22} />
-                ),
-            }}
-          />
+    <HomeTab.Navigator initialRouteName="Home">
+      <HomeTab.Screen
+        name="Home"
+        component={HomeStackScreen}
+        options={{
+          headerShown: false,
+          tabBarLabel: 'Home',
+          tabBarIcon: ({focused}) =>
+            focused ? (
+              <Entypo name="home" color="white" size={26} />
+            ) : (
+              <AntDesign name="home" color="white" size={22} />
+            ),
+        }}
+      />
 
-          <HomeTab.Screen
-            name="Notification"
-            component={() => <NotificationScreen props={props} user={auth} />}
-            options={{
-              headerShown: false,
-              tabBarLabel: 'Notifications',
-              tabBarIcon: ({focused}) =>
-                focused ? (
-                  <Ionicons name="ios-notifications" size={26} color="white" />
-                ) : (
-                  <Ionicons
-                    name="ios-notifications-outline"
-                    size={22}
-                    color="white"
-                  />
-                ),
-            }}
-          />
-        </HomeTab.Navigator>
-      )}
-    </AuthContext.Consumer>
+      <HomeTab.Screen
+        name="Notification"
+        component={NotificationStackScreen}
+        options={{
+          headerShown: false,
+          tabBarLabel: 'Notifications',
+          tabBarIcon: ({focused}) =>
+            focused ? (
+              <Ionicons name="ios-notifications" size={26} color="white" />
+            ) : (
+              <Ionicons
+                name="ios-notifications-outline"
+                size={22}
+                color="white"
+              />
+            ),
+        }}
+      />
+    </HomeTab.Navigator>
   );
 };
 

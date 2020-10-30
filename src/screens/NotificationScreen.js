@@ -1,24 +1,25 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import {View, StyleSheet, FlatList} from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
-import {Text, Card, Avatar} from 'react-native-elements';
 
 import HeaderHome from './../components/Header';
-import {AuthContext, AuthProvider} from '../providers/AuthProvider';
+import {AuthContext} from '../providers/AuthProvider';
 import NotificationCard from '../components/NotificationCard';
 import {getDataJSON} from '../functions/AsyncStorageFunctions';
 
 const NotificationScreen = (props) => {
   //console.log(props);
   const [notifications, setNotifications] = useState([]);
+  const user = useContext(AuthContext);
+
   const loadNotifications = async () => {
     let allnotifications = await getDataJSON('Notifications');
-    //setNotifications(allnotifications);
+    //console.log(user);
     setNotifications(
       allnotifications.filter(
         (el) =>
-          el.postauthor.email == props.user.CurrentUser.email &&
-          el.author.email != props.user.CurrentUser.email,
+          el.postauthor.email == user.CurrentUser.email &&
+          el.author.email != user.CurrentUser.email,
       ),
     );
   };
@@ -35,7 +36,7 @@ const NotificationScreen = (props) => {
         <View style={styles.viewStyle}>
           <HeaderHome
             DrawerFunction={() => {
-              props.props.navigation.toggleDrawer();
+              props.navigation.toggleDrawer();
             }}
           />
           <FlatList
@@ -43,7 +44,7 @@ const NotificationScreen = (props) => {
             renderItem={({item}) => {
               return (
                 <NotificationCard
-                  props={props.props}
+                  props={props}
                   postid={item.postid}
                   icon={item.icon}
                   notification={item.text}
