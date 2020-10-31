@@ -5,7 +5,7 @@ import {createMaterialBottomTabNavigator} from '@react-navigation/material-botto
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {AuthContext, AuthProvider} from './src/providers/AuthProvider';
 import Entypo from 'react-native-vector-icons/Entypo';
-import AntDesign from 'react-native-vector-icons/AntDesign';
+import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import HomeScreen from './src/screens/HomeScreen';
@@ -85,7 +85,7 @@ const HomeTabScreen = (props) => {
             focused ? (
               <Entypo name="home" color="white" size={26} />
             ) : (
-              <AntDesign name="home" color="white" size={22} />
+              <SimpleLineIcons name="home" color="white" size={22} />
             ),
         }}
       />
