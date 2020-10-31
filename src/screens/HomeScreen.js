@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, StyleSheet, FlatList} from 'react-native';
+import {View, StyleSheet, FlatList, ActivityIndicator} from 'react-native';
 import {Card, Button, Input} from 'react-native-elements';
 import Entypo from 'react-native-vector-icons/Entypo';
 import moment from 'moment';
@@ -49,6 +49,7 @@ const HomeScreen = (props) => {
             }
           }}
         />
+        <ActivityIndicator size={'large'} color={'red'} animating={loading} />
       </Card>
     );
   };
@@ -57,6 +58,7 @@ const HomeScreen = (props) => {
 
     let allpost = await getDataJSON('Posts');
     setPosts(allpost);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -75,6 +77,7 @@ const HomeScreen = (props) => {
           <FlatList
             ListHeaderComponent={Inputcard(auth)}
             data={posts}
+            keyExtractor={(item) => item.postid}
             renderItem={({item}) => {
               return (
                 <PostCard

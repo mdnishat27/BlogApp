@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, FlatList} from 'react-native';
+import {View, StyleSheet, FlatList, ActivityIndicator} from 'react-native';
 import {Text, Card, Button, Avatar, Input} from 'react-native-elements';
 import Entypo from 'react-native-vector-icons/Entypo';
 import moment from 'moment';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import uuid from 'uuid-random';
 
 import {AuthContext} from '../providers/AuthProvider';
 import HeaderHome from './../components/Header';
@@ -22,8 +23,10 @@ const PostScreen = (props) => {
   const [comments, setComments] = useState([]);
   const [notifications, setNotifications] = useState([]);
   const [postcomments, setPostComments] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const loadComments = async () => {
+    setLoading(true);
     let allcomments = await getDataJSON('Comments');
     setComments(allcomments);
     setPostComments(allcomments.filter((el) => el.postid == info.postid));
@@ -31,6 +34,7 @@ const PostScreen = (props) => {
   const loadNotifications = async () => {
     let allnotifications = await getDataJSON('Notifications');
     setNotifications(allnotifications);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -93,24 +97,30 @@ const PostScreen = (props) => {
           type="outline"
           title="Comment"
           onPress={function () {
+            const commentid = uuid();
             let newcomment = {
               postid: info.postid,
+              commentid: commentid,
               user: auth.CurrentUser,
               time: moment().format('DD MMM, YYYY'),
               body: comment,
             };
+            const id = uuid();
             let newnotification = {
-              icon: {name: 'comment', type: 'font-awesome', color: 'black'},
+              notificationid: id,
+              type: 'comment',
               author: auth.CurrentUser,
               postid: info.postid,
               postauthor: info.user,
-              text: auth.CurrentUser.name + ' commented on your post',
+              text: auth.CurrentUser.name,
             };
             if (postcomments == undefined) {
               setPostComments([newcomment]);
             } else {
               setPostComments([...postcomments, newcomment]);
             }
+            //console.log(newnotification);
+            //console.log(newcomment);
 
             if (comments == undefined) {
               setComments([newcomment]);
@@ -129,6 +139,7 @@ const PostScreen = (props) => {
             }
           }}
         />
+        <ActivityIndicator size={'large'} color={'red'} animating={loading} />
       </SafeAreaView>
     );
   };
@@ -142,10 +153,10 @@ const PostScreen = (props) => {
               props.navigation.toggleDrawer();
             }}
           />
-
           <FlatList
             ListHeaderComponent={Loadpost(auth)}
             data={postcomments}
+            keyExtractor={(item) => item.commentid}
             renderItem={({item}) => {
               return (
                 <CommentCard

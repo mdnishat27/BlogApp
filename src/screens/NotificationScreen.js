@@ -1,5 +1,5 @@
 import React, {useEffect, useState, useContext} from 'react';
-import {View, StyleSheet, FlatList} from 'react-native';
+import {View, StyleSheet, FlatList, ActivityIndicator} from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
 
 import HeaderHome from './../components/Header';
@@ -10,9 +10,11 @@ import {getDataJSON} from '../functions/AsyncStorageFunctions';
 const NotificationScreen = (props) => {
   //console.log(props);
   const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(false);
   const user = useContext(AuthContext);
 
   const loadNotifications = async () => {
+    setLoading(true);
     let allnotifications = await getDataJSON('Notifications');
     //console.log(user);
     setNotifications(
@@ -22,6 +24,7 @@ const NotificationScreen = (props) => {
           el.author.email != user.CurrentUser.email,
       ),
     );
+    setLoading(false);
   };
 
   const isFocused = useIsFocused();
@@ -37,15 +40,23 @@ const NotificationScreen = (props) => {
           props.navigation.toggleDrawer();
         }}
       />
+
+      <ActivityIndicator size={'large'} color={'red'} animating={loading} />
+
       <FlatList
         data={notifications}
+        keyExtractor={(item) => item.notificationid}
         renderItem={({item}) => {
           return (
             <NotificationCard
               navigation={props.navigation}
               postid={item.postid}
-              icon={item.icon}
-              notification={item.text}
+              icon={
+                item.type == 'comment'
+                  ? {name: 'comment', type: 'font-awesome', color: 'black'}
+                  : {name: 'comment', type: 'font-awesome', color: 'black'}
+              }
+              notification={item.text + ' commented on your post'}
             />
           );
         }}
