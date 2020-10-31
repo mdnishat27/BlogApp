@@ -1,8 +1,14 @@
 import React, {useState, useEffect} from 'react';
-import {View, StyleSheet, FlatList, ActivityIndicator} from 'react-native';
+import {
+  StyleSheet,
+  FlatList,
+  ActivityIndicator,
+  ScrollView,
+} from 'react-native';
 import {Card, Button, Input} from 'react-native-elements';
 import Entypo from 'react-native-vector-icons/Entypo';
 import moment from 'moment';
+import {LogBox} from 'react-native';
 
 import PostCard from './../components/PostCard';
 import HeaderHome from './../components/Header';
@@ -19,47 +25,6 @@ const HomeScreen = (props) => {
   const [post, setPost] = useState('');
   const input = React.createRef();
 
-  const Inputcard = (auth) => {
-    return (
-      <Card>
-        <Input
-          ref={input}
-          clearButtonMode={'always'}
-          placeholder="What's On Your Mind?"
-          leftIcon={<Entypo name="pencil" size={24} color="black" />}
-          onChangeText={function (currentInput) {
-            setPost(currentInput);
-          }}
-        />
-        <Button
-          title="Post"
-          type="outline"
-          onPress={function () {
-            if (post != '') {
-              let newpost = {
-                user: auth.CurrentUser,
-                time: moment().format('DD MMM, YYYY'),
-                postid:
-                  auth.CurrentUser.email +
-                  moment().format('YYYY-MM-DD hh:mm:ss a'),
-                body: post,
-              };
-              if (posts == undefined) {
-                setPosts([newpost]);
-                storeDataJSON('Posts', [newpost]);
-              } else {
-                setPosts([...posts, newpost]);
-                addDataJSON('Posts', newpost);
-              }
-            }
-            input.current.clear();
-            setPost('');
-          }}
-        />
-        <ActivityIndicator size={'large'} color={'red'} animating={loading} />
-      </Card>
-    );
-  };
   const loadPosts = async () => {
     setLoading(true);
 
@@ -70,34 +35,79 @@ const HomeScreen = (props) => {
 
   useEffect(() => {
     loadPosts();
+    LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
   }, []);
 
   return (
     <AuthContext.Consumer>
       {(auth) => (
-        <View style={styles.viewStyle}>
+        <ScrollView style={styles.viewStyle}>
           <HeaderHome
             DrawerFunction={() => {
               props.navigation.toggleDrawer();
             }}
           />
-          <FlatList
-            ListHeaderComponent={Inputcard(auth)}
-            data={posts}
-            keyExtractor={(item) => item.postid}
-            renderItem={({item}) => {
-              return (
-                <PostCard
-                  author={item.user.name}
-                  title={'Posted on ' + item.time}
-                  body={item.body}
-                  navigation={props.navigation}
-                  post={item}
-                />
-              );
-            }}
-          />
-        </View>
+          <Card>
+            <Input
+              ref={input}
+              clearButtonMode={'always'}
+              placeholder="What's On Your Mind?"
+              leftIcon={<Entypo name="pencil" size={24} color="black" />}
+              onChangeText={function (currentInput) {
+                setPost(currentInput);
+              }}
+            />
+            <Button
+              title="Post"
+              type="outline"
+              onPress={function () {
+                if (post != '') {
+                  let newpost = {
+                    user: auth.CurrentUser,
+                    time: moment().format('DD MMM, YYYY'),
+                    postid:
+                      auth.CurrentUser.email +
+                      moment().format('YYYY-MM-DD hh:mm:ss a'),
+                    body: post,
+                  };
+                  if (posts == undefined) {
+                    setPosts([newpost]);
+                    storeDataJSON('Posts', [newpost]);
+                  } else {
+                    setPosts([...posts, newpost]);
+                    addDataJSON('Posts', newpost);
+                  }
+                }
+                input.current.clear();
+                setPost('');
+              }}
+            />
+            <ActivityIndicator
+              size={'large'}
+              color={'red'}
+              animating={loading}
+            />
+          </Card>
+          <>
+            <FlatList
+              data={posts}
+              inverted={true}
+              scrollsToTop={true}
+              keyExtractor={(item) => item.postid}
+              renderItem={({item}) => {
+                return (
+                  <PostCard
+                    author={item.user.name}
+                    title={'Posted on ' + item.time}
+                    body={item.body}
+                    navigation={props.navigation}
+                    post={item}
+                  />
+                );
+              }}
+            />
+          </>
+        </ScrollView>
       )}
     </AuthContext.Consumer>
   );

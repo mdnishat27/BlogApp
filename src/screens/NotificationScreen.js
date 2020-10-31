@@ -1,5 +1,10 @@
 import React, {useEffect, useState, useContext} from 'react';
-import {View, StyleSheet, FlatList, ActivityIndicator} from 'react-native';
+import {
+  StyleSheet,
+  FlatList,
+  ActivityIndicator,
+  ScrollView,
+} from 'react-native';
 import {useIsFocused} from '@react-navigation/native';
 
 import HeaderHome from './../components/Header';
@@ -36,7 +41,7 @@ const NotificationScreen = (props) => {
   }, [isFocused]);
 
   return (
-    <View style={styles.viewStyle}>
+    <ScrollView style={styles.viewStyle}>
       <HeaderHome
         DrawerFunction={() => {
           props.navigation.toggleDrawer();
@@ -47,6 +52,8 @@ const NotificationScreen = (props) => {
 
       <FlatList
         data={notifications}
+        inverted={true}
+        scrollsToTop={true}
         keyExtractor={(item) => item.notificationid}
         renderItem={({item}) => {
           return (
@@ -63,7 +70,7 @@ const NotificationScreen = (props) => {
           );
         }}
       />
-    </View>
+    </ScrollView>
   );
 };
 
