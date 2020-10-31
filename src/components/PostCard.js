@@ -1,9 +1,30 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Card, Button, Text, Avatar} from 'react-native-elements';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import {useIsFocused} from '@react-navigation/native';
+
+import {getDataJSON} from '../functions/AsyncStorageFunctions';
 
 function PostCard(props) {
+  const [postcomments, setPostComments] = useState([]);
+  const isVisible = useIsFocused();
+
+  const loadComments = async () => {
+    let allcomments = await getDataJSON('Comments');
+    if (allcomments != null) {
+      setPostComments(
+        allcomments.filter((el) => el.postid == props.post.postid),
+      );
+    } else {
+      setPostComments([]);
+    }
+  };
+
+  useEffect(() => {
+    loadComments();
+  }, [isVisible]);
+
   return (
     <Card>
       <View style={styles.viewStyle}>
@@ -34,7 +55,7 @@ function PostCard(props) {
         />
         <Button
           type="solid"
-          title="    Comment    "
+          title={'  Comment  (' + postcomments.length + ')  '}
           onPress={function () {
             //console.log(props.post);
             props.navigation.navigate('Post', props.post);
