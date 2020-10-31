@@ -24,20 +24,22 @@ const PostScreen = (props) => {
   const [notifications, setNotifications] = useState([]);
   const [postcomments, setPostComments] = useState([]);
   const [loading, setLoading] = useState(false);
+  const input = React.createRef();
 
   const loadComments = async () => {
     setLoading(true);
     let allcomments = await getDataJSON('Comments');
-    if (allcomments != undefined) {
-      setComments(allcomments);
+    setComments(allcomments);
+    if (allcomments != null) {
       setPostComments(allcomments.filter((el) => el.postid == info.postid));
+    } else {
+      setPostComments([]);
     }
   };
+
   const loadNotifications = async () => {
     let allnotifications = await getDataJSON('Notifications');
-    if (notifications != undefined) {
-      setNotifications(allnotifications);
-    }
+    setNotifications(allnotifications);
     setLoading(false);
   };
 
@@ -87,10 +89,12 @@ const PostScreen = (props) => {
             paddingVertical: 5,
             paddingBottom: 10,
           }}>
-          17 Likes, 10 Comments.
+          0 Likes, {postcomments.length} Comments.
         </Text>
         <Card.Divider />
         <Input
+          ref={input}
+          clearButtonMode={'always'}
           placeholder="Write a comment"
           leftIcon={<Entypo name="pencil" size={20} color="black" />}
           onChangeText={function (currentInput) {
@@ -101,48 +105,49 @@ const PostScreen = (props) => {
           type="outline"
           title="Comment"
           onPress={function () {
-            const commentid = uuid();
-            let newcomment = {
-              postid: info.postid,
-              commentid: commentid,
-              user: auth.CurrentUser,
-              time: moment().format('DD MMM, YYYY'),
-              body: comment,
-            };
-            const id = uuid();
-            let newnotification = {
-              notificationid: id,
-              type: 'comment',
-              author: auth.CurrentUser,
-              postid: info.postid,
-              postauthor: info.user,
-              text: auth.CurrentUser.name,
-            };
-            if (postcomments == undefined) {
-              setPostComments([newcomment]);
-            } else {
-              setPostComments([...postcomments, newcomment]);
-            }
-            //console.log(newnotification);
-            //console.log(newcomment);
+            if (comment != '') {
+              const commentid = uuid();
+              let newcomment = {
+                postid: info.postid,
+                commentid: commentid,
+                user: auth.CurrentUser,
+                time: moment().format('DD MMM, YYYY'),
+                body: comment,
+              };
+              const id = uuid();
+              let newnotification = {
+                notificationid: id,
+                type: 'comment',
+                author: auth.CurrentUser,
+                postid: info.postid,
+                postauthor: info.user,
+                text: auth.CurrentUser.name,
+              };
+              if (postcomments == undefined) {
+                setPostComments([newcomment]);
+              } else {
+                setPostComments([...postcomments, newcomment]);
+              }
+              //console.log(newnotification);
+              //console.log(newcomment);
+              if (comments == undefined) {
+                setComments([newcomment]);
+                storeDataJSON('Comments', [newcomment]);
+              } else {
+                setComments([...comments, newcomment]);
+                addDataJSON('Comments', newcomment);
+              }
 
-            if (comments == undefined || comments == null || comments == []) {
-              setComments([newcomment]);
-              storeDataJSON('Comments', [newcomment]);
-            } else {
-              console.log(comments);
-              console.log(newcomment);
-              setComments([...comments, newcomment]);
-              addDataJSON('Comments', newcomment);
+              if (notifications == undefined) {
+                setNotifications([newnotification]);
+                storeDataJSON('Notifications', [newnotification]);
+              } else {
+                setNotifications([...notifications, newnotification]);
+                addDataJSON('Notifications', newnotification);
+              }
             }
-
-            if (notifications == undefined) {
-              setNotifications([newnotification]);
-              storeDataJSON('Notifications', [newnotification]);
-            } else {
-              setNotifications([...notifications, newnotification]);
-              addDataJSON('Notifications', newnotification);
-            }
+            input.current.clear();
+            setComment('');
           }}
         />
         <ActivityIndicator size={'large'} color={'red'} animating={loading} />
