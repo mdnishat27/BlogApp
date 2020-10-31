@@ -17,11 +17,14 @@ const HomeScreen = (props) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [post, setPost] = useState('');
+  const input = React.createRef();
 
   const Inputcard = (auth) => {
     return (
       <Card>
         <Input
+          ref={input}
+          clearButtonMode={'always'}
           placeholder="What's On Your Mind?"
           leftIcon={<Entypo name="pencil" size={24} color="black" />}
           onChangeText={function (currentInput) {
@@ -32,21 +35,25 @@ const HomeScreen = (props) => {
           title="Post"
           type="outline"
           onPress={function () {
-            let newpost = {
-              user: auth.CurrentUser,
-              time: moment().format('DD MMM, YYYY'),
-              postid:
-                auth.CurrentUser.email +
-                moment().format('YYYY-MM-DD hh:mm:ss a'),
-              body: post,
-            };
-            if (posts == undefined) {
-              setPosts([newpost]);
-              storeDataJSON('Posts', [newpost]);
-            } else {
-              setPosts([...posts, newpost]);
-              addDataJSON('Posts', newpost);
+            if (post != '') {
+              let newpost = {
+                user: auth.CurrentUser,
+                time: moment().format('DD MMM, YYYY'),
+                postid:
+                  auth.CurrentUser.email +
+                  moment().format('YYYY-MM-DD hh:mm:ss a'),
+                body: post,
+              };
+              if (posts == undefined) {
+                setPosts([newpost]);
+                storeDataJSON('Posts', [newpost]);
+              } else {
+                setPosts([...posts, newpost]);
+                addDataJSON('Posts', newpost);
+              }
             }
+            input.current.clear();
+            setPost('');
           }}
         />
         <ActivityIndicator size={'large'} color={'red'} animating={loading} />
