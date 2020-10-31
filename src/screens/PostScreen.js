@@ -50,21 +50,8 @@ const PostScreen = (props) => {
 
   const Loadpost = (auth) => {
     return (
-      <SafeAreaView
-        style={{
-          flex: 1,
-          borderRadius: 10,
-          borderBottomWidth: 20,
-          borderLeftWidth: 10,
-          borderRightWidth: 10,
-          borderTopWidth: 10,
-          borderColor: 'transparent',
-        }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-          }}>
+      <SafeAreaView style={styles.mainviewStyle}>
+        <View style={styles.view2Style}>
           <Avatar
             containerStyle={{backgroundColor: '#ffab91'}}
             rounded
@@ -75,20 +62,13 @@ const PostScreen = (props) => {
             {info.user.name}
           </Text>
         </View>
-        <Text style={{fontStyle: 'italic'}}> Posted on {info.time}</Text>
-        <Text>{'\n'}</Text>
-        <Text
-          style={{
-            paddingVertical: 10,
-          }}>
-          {info.body}
+        <Text style={{fontStyle: 'italic', fontSize: 12}}>
+          {'  '}
+          Posted on {info.time}
         </Text>
+        <Text style={styles.textstyle}>{info.body}</Text>
         <Card.Divider />
-        <Text
-          style={{
-            paddingVertical: 5,
-            paddingBottom: 10,
-          }}>
+        <Text style={{paddingBottom: 7}}>
           0 Likes, {postcomments.length} Comments.
         </Text>
         <Card.Divider />
@@ -185,12 +165,25 @@ const PostScreen = (props) => {
 };
 
 const styles = StyleSheet.create({
-  textStyle: {
-    fontSize: 30,
-    color: 'blue',
+  textstyle: {
+    paddingVertical: 25,
+    paddingBottom: 20,
+    fontSize: 18,
+  },
+  view2Style: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   viewStyle: {
     flex: 1,
+  },
+  mainviewStyle: {
+    flex: 1,
+    borderRadius: 10,
+    borderBottomWidth: 20,
+    borderLeftWidth: 10,
+    borderRightWidth: 10,
+    borderColor: 'transparent',
   },
 });
 
