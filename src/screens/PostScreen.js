@@ -28,12 +28,16 @@ const PostScreen = (props) => {
   const loadComments = async () => {
     setLoading(true);
     let allcomments = await getDataJSON('Comments');
-    setComments(allcomments);
-    setPostComments(allcomments.filter((el) => el.postid == info.postid));
+    if (allcomments != undefined) {
+      setComments(allcomments);
+      setPostComments(allcomments.filter((el) => el.postid == info.postid));
+    }
   };
   const loadNotifications = async () => {
     let allnotifications = await getDataJSON('Notifications');
-    setNotifications(allnotifications);
+    if (notifications != undefined) {
+      setNotifications(allnotifications);
+    }
     setLoading(false);
   };
 
@@ -122,10 +126,12 @@ const PostScreen = (props) => {
             //console.log(newnotification);
             //console.log(newcomment);
 
-            if (comments == undefined) {
+            if (comments == undefined || comments == null || comments == []) {
               setComments([newcomment]);
               storeDataJSON('Comments', [newcomment]);
             } else {
+              console.log(comments);
+              console.log(newcomment);
               setComments([...comments, newcomment]);
               addDataJSON('Comments', newcomment);
             }

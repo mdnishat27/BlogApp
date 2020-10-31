@@ -56,14 +56,16 @@ const SignUpScreen = (props) => {
           title="  Sign Up!"
           type="solid"
           onPress={function () {
-            let currentUser = {
-              name: Name,
-              sid: SID,
-              email: Email,
-              password: Password,
-            };
-            storeDataJSON(Email, currentUser);
-            props.navigation.navigate('SignIn');
+            if (Name != '' && SID != '' && Email != '' && Password != '') {
+              let currentUser = {
+                name: Name,
+                sid: SID,
+                email: Email,
+                password: Password,
+              };
+              storeDataJSON(Email, currentUser);
+              props.navigation.navigate('SignIn');
+            }
           }}
         />
         <Button

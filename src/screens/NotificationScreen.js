@@ -17,13 +17,15 @@ const NotificationScreen = (props) => {
     setLoading(true);
     let allnotifications = await getDataJSON('Notifications');
     //console.log(user);
-    setNotifications(
-      allnotifications.filter(
-        (el) =>
-          el.postauthor.email == user.CurrentUser.email &&
-          el.author.email != user.CurrentUser.email,
-      ),
-    );
+    if (allnotifications != undefined) {
+      setNotifications(
+        allnotifications.filter(
+          (el) =>
+            el.postauthor.email == user.CurrentUser.email &&
+            el.author.email != user.CurrentUser.email,
+        ),
+      );
+    }
     setLoading(false);
   };
 

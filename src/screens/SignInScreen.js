@@ -43,12 +43,12 @@ const SignInScreen = (props) => {
               type="solid"
               onPress={async function () {
                 let UserData = await getDataJSON(Email);
-                if (UserData.password == Password) {
+                if (UserData != undefined && UserData.password == Password) {
                   auth.setIsLoggedIn(true);
                   auth.setCurrentUser(UserData);
                 } else {
                   alert('Login Failed');
-                  console.log(UserData);
+                  //console.log(UserData);
                 }
               }}
             />
