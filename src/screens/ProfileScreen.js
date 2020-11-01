@@ -1,5 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, ToastAndroid} from 'react-native';
 import {Text, Button, Avatar} from 'react-native-elements';
 import prompt from 'react-native-prompt-android';
 
@@ -50,11 +50,24 @@ const ProfileScreen = (props) => {
             <Text style={{padding: 20, fontSize: 30}}>
               {auth.CurrentUser.name}
             </Text>
-            <Button title={' Delete Profile '} />
+            <Button
+              title={' Delete Profile '}
+              onPress={function () {
+                ToastAndroid.show('Coming soon...', ToastAndroid.SHORT);
+              }}
+            />
           </View>
+          <Text style={styles.textStyle}>
+            {'            '}
+            Student id : {auth.CurrentUser.sid}
+          </Text>
+          <Text style={styles.textStyle}>
+            {'            '}
+            Email : {auth.CurrentUser.email}
+          </Text>
           <View style={styles.profileitemViewStyle}>
             <Button
-              type="outline"
+              type="clear"
               title={'Edit'}
               onPress={function () {
                 prompt(
@@ -87,7 +100,7 @@ const ProfileScreen = (props) => {
           </View>
           <View style={styles.profileitemViewStyle}>
             <Button
-              type="outline"
+              type="clear"
               title={'Edit'}
               onPress={function () {
                 prompt(
@@ -120,7 +133,7 @@ const ProfileScreen = (props) => {
           </View>
           <View style={styles.profileitemViewStyle}>
             <Button
-              type="outline"
+              type="clear"
               title={'Edit'}
               onPress={function () {
                 prompt(
@@ -159,8 +172,9 @@ const ProfileScreen = (props) => {
 
 const styles = StyleSheet.create({
   textStyle: {
-    fontSize: 25,
+    fontSize: 18,
     color: 'black',
+    paddingVertical: 5,
   },
   viewStyle: {
     flex: 1,
@@ -171,11 +185,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   profileitemViewStyle: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 5,
     alignContent: 'space-around',
     flexDirection: 'row',
     borderColor: 'transparent',
-    paddingVertical: 10,
   },
 });
 
