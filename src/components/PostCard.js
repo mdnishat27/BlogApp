@@ -3,6 +3,7 @@ import {StyleSheet, View} from 'react-native';
 import {Card, Button, Text, Avatar} from 'react-native-elements';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import {useIsFocused} from '@react-navigation/native';
+import uuid from 'uuid-random';
 
 import {
   addDataJSON,
@@ -14,9 +15,15 @@ import {
 function PostCard(props) {
   const [postcomments, setPostComments] = useState([]);
   const [likes, setLikes] = useState([]);
+  const [notifications, setNotifications] = useState([]);
   const [islike, setIsLike] = useState(false);
   const [iconname, setIconname] = useState('like2');
   const isVisible = useIsFocused();
+
+  const loadNotifications = async () => {
+    let allnotifications = await getDataJSON('Notifications');
+    setNotifications(allnotifications);
+  };
 
   const loadComments = async () => {
     let allcomments = await getDataJSON('Comments');
@@ -43,6 +50,7 @@ function PostCard(props) {
   };
 
   useEffect(() => {
+    loadNotifications();
     loadComments();
     loadLikes();
   }, [isVisible]);
@@ -75,7 +83,6 @@ function PostCard(props) {
           title={'  Like (' + likes.length + ')'}
           icon={<AntDesign name={iconname} size={24} color="dodgerblue" />}
           onPress={async function () {
-            //await loadLikes();
             if (islike) {
               setIsLike(false);
               setIconname('like2');
@@ -96,6 +103,22 @@ function PostCard(props) {
                 setLikes([]);
                 removeData('Likes-' + props.post.postid);
               }
+              const id = uuid();
+              let newnotification = {
+                notificationid: id,
+                type: 'unlike',
+                author: props.user,
+                postid: props.post.postid,
+                postauthor: props.author,
+                text: props.user.name,
+              };
+              if (notifications == undefined) {
+                setNotifications([newnotification]);
+                storeDataJSON('Notifications', [newnotification]);
+              } else {
+                setNotifications([...notifications, newnotification]);
+                addDataJSON('Notifications', newnotification);
+              }
               //console.log(likes);
             } else {
               setIsLike(true);
@@ -110,6 +133,22 @@ function PostCard(props) {
               } else {
                 setLikes([...likes, likeobject]);
                 addDataJSON('Likes-' + props.post.postid, likeobject);
+              }
+              const id = uuid();
+              let newnotification = {
+                notificationid: id,
+                type: 'like',
+                author: props.user,
+                postid: props.post.postid,
+                postauthor: props.author,
+                text: props.user.name,
+              };
+              if (notifications == undefined) {
+                setNotifications([newnotification]);
+                storeDataJSON('Notifications', [newnotification]);
+              } else {
+                setNotifications([...notifications, newnotification]);
+                addDataJSON('Notifications', newnotification);
               }
               //console.log(likes);
               //console.log(likeobject);

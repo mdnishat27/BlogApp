@@ -27,7 +27,7 @@ function NotificationCard(props) {
         }
         style={styles.viewStyle}>
         <Avatar
-          containerStyle={{backgroundColor: 'cyan'}}
+          containerStyle={{backgroundColor: '#C8B560'}}
           rounded
           icon={props.icon}
           activeOpacity={1}

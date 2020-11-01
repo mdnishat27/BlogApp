@@ -40,6 +40,26 @@ const NotificationScreen = (props) => {
     loadNotifications();
   }, [isFocused]);
 
+  const geticon = (type) => {
+    if (type == 'comment') {
+      return {name: 'comment', type: 'font-awesome', color: 'green'};
+    } else if (type == 'like') {
+      return {name: 'like1', type: 'ant-design', color: 'blue'};
+    } else {
+      return {name: 'dislike1', type: 'ant-design', color: 'black'};
+    }
+  };
+
+  const getext = (text, type) => {
+    if (type == 'comment') {
+      return text + ' commented on your post';
+    } else if (type == 'like') {
+      return text + ' liked your post';
+    } else {
+      return text + ' unliked your post';
+    }
+  };
+
   return (
     <ScrollView style={styles.viewStyle}>
       <HeaderHome
@@ -60,12 +80,8 @@ const NotificationScreen = (props) => {
             <NotificationCard
               navigation={props.navigation}
               postid={item.postid}
-              icon={
-                item.type == 'comment'
-                  ? {name: 'comment', type: 'font-awesome', color: 'black'}
-                  : {name: 'comment', type: 'font-awesome', color: 'black'}
-              }
-              notification={item.text + ' commented on your post'}
+              icon={geticon(item.type)}
+              notification={getext(item.text, item.type)}
             />
           );
         }}
