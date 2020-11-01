@@ -27,6 +27,7 @@ const PostScreen = (props) => {
   let info = props.route.params;
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState([]);
+  const [likes, setLikes] = useState([]);
   const [notifications, setNotifications] = useState([]);
   const [postcomments, setPostComments] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -46,12 +47,20 @@ const PostScreen = (props) => {
   const loadNotifications = async () => {
     let allnotifications = await getDataJSON('Notifications');
     setNotifications(allnotifications);
+  };
+  const loadLikes = async () => {
+    let alllikes = await getDataJSON('Likes-' + info.postid);
+    if (alllikes != null) {
+      setLikes(alllikes);
+    } else {
+    }
     setLoading(false);
   };
 
   useEffect(() => {
     loadComments();
     loadNotifications();
+    loadLikes();
   }, []);
 
   return (
@@ -82,7 +91,7 @@ const PostScreen = (props) => {
             <Text style={styles.textstyle}>{info.body}</Text>
             <Card.Divider />
             <Text style={{paddingBottom: 7}}>
-              0 Likes, {postcomments.length} Comments.
+              {likes.length} Likes, {postcomments.length} Comments.
             </Text>
             <Card.Divider />
             <Input
