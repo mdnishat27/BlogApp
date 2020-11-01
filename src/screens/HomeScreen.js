@@ -97,7 +97,8 @@ const HomeScreen = (props) => {
               renderItem={({item}) => {
                 return (
                   <PostCard
-                    author={item.user.name}
+                    user={auth.CurrentUser}
+                    author={item.user}
                     title={'Posted on ' + item.time}
                     body={item.body}
                     navigation={props.navigation}
