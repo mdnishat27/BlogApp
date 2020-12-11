@@ -1,5 +1,7 @@
 import React from 'react';
 import {Header} from 'react-native-elements';
+import firebase from '@react-native-firebase/app';
+import '@react-native-firebase/auth';
 
 import {AuthContext} from '../providers/AuthProvider';
 
@@ -21,8 +23,16 @@ const HeaderHome = (props) => {
             icon: 'logout',
             color: '#fff',
             onPress: function () {
-              auth.setIsLoggedIn(false);
-              auth.setCurrentUser({});
+              firebase
+                .auth()
+                .signOut()
+                .then(() => {
+                  auth.setIsLoggedIn(false);
+                  auth.setCurrentUser({});
+                })
+                .catch((error) => {
+                  alert(error);
+                });
             },
           }}
         />

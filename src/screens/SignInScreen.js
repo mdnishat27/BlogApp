@@ -4,9 +4,10 @@ import {Input, Button, Card} from 'react-native-elements';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import firebase from '@react-native-firebase/app';
+import '@react-native-firebase/auth';
 
 import {AuthContext} from '../providers/AuthProvider';
-import {getDataJSON} from '../functions/AsyncStorageFunctions';
 
 const SignInScreen = (props) => {
   const [Email, setEmail] = useState('');
@@ -41,15 +42,19 @@ const SignInScreen = (props) => {
               icon={<FontAwesomeIcon name="sign-in" size={24} color="white" />}
               title="  Sign In"
               type="solid"
-              onPress={async function () {
-                let UserData = await getDataJSON(Email);
-                if (UserData != undefined && UserData.password == Password) {
-                  auth.setIsLoggedIn(true);
-                  auth.setCurrentUser(UserData);
-                } else {
-                  alert('Login Failed');
-                  //console.log(UserData);
-                }
+              onPress={() => {
+                firebase
+                  .auth()
+                  .signInWithEmailAndPassword(Email, Password)
+                  .then((userCreds) => {
+                    console.log('log in successful');
+                    auth.setIsLoggedIn(true);
+                    auth.setCurrentUser(userCreds.user);
+                    console.log(userCreds.user);
+                  })
+                  .catch((error) => {
+                    alert(error);
+                  });
               }}
             />
             <Button

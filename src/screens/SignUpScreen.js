@@ -5,8 +5,9 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
-
-import {storeDataJSON} from '../functions/AsyncStorageFunctions';
+import firebase from '@react-native-firebase/app';
+import '@react-native-firebase/auth';
+import '@react-native-firebase/firestore';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
 const SignUpScreen = (props) => {
@@ -55,16 +56,34 @@ const SignUpScreen = (props) => {
           icon={<AntDesign name="adduser" size={24} color="white" />}
           title="  Sign Up!"
           type="solid"
-          onPress={function () {
+          onPress={() => {
             if (Name != '' && SID != '' && Email != '' && Password != '') {
-              let currentUser = {
-                name: Name,
-                sid: SID,
-                email: Email,
-                password: Password,
-              };
-              storeDataJSON(Email, currentUser);
-              props.navigation.navigate('SignIn');
+              firebase
+                .auth()
+                .createUserWithEmailAndPassword(Email, Password)
+                .then((userCreds) => {
+                  userCreds.user.updateProfile({displayName: Name});
+                  firebase
+                    .firestore()
+                    .collection('users')
+                    .doc(userCreds.user.uid)
+                    .set({
+                      name: Name,
+                      sid: SID,
+                      email: Email,
+                    })
+                    .then(() => {
+                      console.log('account created');
+                      alert(userCreds.user.uid);
+                      props.navigation.navigate('SignIn');
+                    })
+                    .catch((error) => {
+                      alert(error);
+                    });
+                })
+                .catch((error) => {
+                  alert(error);
+                });
             }
           }}
         />
