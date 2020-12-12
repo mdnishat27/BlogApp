@@ -1,23 +1,38 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, StyleSheet, ToastAndroid} from 'react-native';
 import {Text, Button, Avatar} from 'react-native-elements';
 import prompt from 'react-native-prompt-android';
+import firebase from '@react-native-firebase/app';
+import '@react-native-firebase/firestore';
+import '@react-native-firebase/auth';
 
 import {AuthContext} from '../providers/AuthProvider';
 import HeaderHome from './../components/Header';
-import {mergeDataJSON, getDataJSON} from '../functions/AsyncStorageFunctions';
 
 const ProfileScreen = (props) => {
   const [birthdate, setBirthdate] = useState('');
   const [address, setAddress] = useState('');
   const [work, setWork] = useState('');
-  const user = useContext(AuthContext);
+  const [sid, setSid] = useState('');
 
   const loadProfile = async () => {
-    let profile = await getDataJSON(user.CurrentUser.email);
-    setBirthdate(profile.birthdate);
-    setAddress(profile.address);
-    setWork(profile.work);
+    firebase
+      .firestore()
+      .collection('users')
+      .doc(firebase.auth().currentUser.uid)
+      .onSnapshot((querySnapshot) => {
+        console.log(querySnapshot);
+        setBirthdate(querySnapshot._data.birthdate);
+        setAddress(querySnapshot._data.address);
+        setWork(querySnapshot._data.work);
+        setSid(querySnapshot._data.sid);
+      })
+      .then(() => {
+        console.log('profile loaded');
+      })
+      .catch((error) => {
+        alert(error);
+      });
   };
 
   useEffect(() => {
@@ -48,7 +63,7 @@ const ProfileScreen = (props) => {
               activeOpacity={1}
             />
             <Text style={{padding: 20, fontSize: 30}}>
-              {auth.CurrentUser.name}
+              {auth.CurrentUser.displayName}
             </Text>
             <Button
               title={' Delete Profile '}
@@ -59,7 +74,7 @@ const ProfileScreen = (props) => {
           </View>
           <Text style={styles.textStyle}>
             {'            '}
-            Student id : {auth.CurrentUser.sid}
+            Student id : {sid}
           </Text>
           <Text style={styles.textStyle}>
             {'            '}
@@ -83,9 +98,19 @@ const ProfileScreen = (props) => {
                       text: 'OK',
                       onPress: (birthdate) => {
                         setBirthdate(birthdate);
-                        mergeDataJSON(auth.CurrentUser.email, {
-                          birthdate: birthdate,
-                        });
+                        firebase
+                          .firestore()
+                          .collection('users')
+                          .doc(auth.CurrentUser.uid)
+                          .update({
+                            birthdate: birthdate,
+                          })
+                          .then(() => {
+                            console.log('birthday updated');
+                          })
+                          .catch((error) => {
+                            alert(error);
+                          });
                       },
                     },
                   ],
@@ -116,9 +141,19 @@ const ProfileScreen = (props) => {
                       text: 'OK',
                       onPress: (newaddress) => {
                         setAddress(newaddress);
-                        mergeDataJSON(auth.CurrentUser.email, {
-                          address: newaddress,
-                        });
+                        firebase
+                          .firestore()
+                          .collection('users')
+                          .doc(auth.CurrentUser.uid)
+                          .update({
+                            address: newaddress,
+                          })
+                          .then(() => {
+                            console.log('address updated');
+                          })
+                          .catch((error) => {
+                            alert(error);
+                          });
                       },
                     },
                   ],
@@ -149,9 +184,19 @@ const ProfileScreen = (props) => {
                       text: 'OK',
                       onPress: (office) => {
                         setWork(office);
-                        mergeDataJSON(auth.CurrentUser.email, {
-                          work: office,
-                        });
+                        firebase
+                          .firestore()
+                          .collection('users')
+                          .doc(auth.CurrentUser.uid)
+                          .update({
+                            work: office,
+                          })
+                          .then(() => {
+                            console.log('office updated');
+                          })
+                          .catch((error) => {
+                            alert(error);
+                          });
                       },
                     },
                   ],
