@@ -21,7 +21,7 @@ const ProfileScreen = (props) => {
       .collection('users')
       .doc(firebase.auth().currentUser.uid)
       .onSnapshot((querySnapshot) => {
-        console.log(querySnapshot);
+        //console.log(querySnapshot);
         setBirthdate(querySnapshot._data.birthdate);
         setAddress(querySnapshot._data.address);
         setWork(querySnapshot._data.work);

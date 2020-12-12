@@ -2,7 +2,6 @@ import React, {useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Card, Button, Text, Avatar} from 'react-native-elements';
 import AntDesign from 'react-native-vector-icons/AntDesign';
-import {useIsFocused} from '@react-navigation/native';
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/firestore';
 
@@ -11,7 +10,6 @@ function PostCard(props) {
   const [likes, setLikes] = useState([]);
   const [islike, setIsLike] = useState(false);
   const [iconname, setIconname] = useState('like2');
-  const isVisible = useIsFocused();
 
   const loadLikesComments = async () => {
     firebase
@@ -23,11 +21,9 @@ function PostCard(props) {
         let temp_comments = [];
         let temp_likes = [];
         querySnapshot._data.comments.forEach((doc) => {
-          //console.log(querySnapshot);
           temp_comments.push(doc);
         });
         querySnapshot._data.likes.forEach((doc) => {
-          //console.log(querySnapshot);
           temp_likes.push(doc);
           if (doc.userid == props.user.uid) {
             setIsLike(true);
@@ -44,7 +40,7 @@ function PostCard(props) {
 
   useEffect(() => {
     loadLikesComments();
-  }, [isVisible]);
+  }, []);
 
   return (
     <Card>

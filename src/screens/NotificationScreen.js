@@ -28,9 +28,12 @@ const NotificationScreen = (props) => {
       //.orderBy('time', 'desc')
       .onSnapshot((querySnapshot) => {
         let temp_notifications = [];
+        let count = 0;
         querySnapshot._data.notifications.forEach((doc) => {
-          //console.log(querySnapshot);
+          doc['id'] = count;
+          //console.log(doc);
           temp_notifications.push(doc);
+          count += 1;
         });
         setNotifications(temp_notifications);
         setLoading(false);

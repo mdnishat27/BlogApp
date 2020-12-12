@@ -37,11 +37,9 @@ const PostScreen = (props) => {
         let temp_comments = [];
         let temp_likes = [];
         querySnapshot._data.comments.forEach((doc) => {
-          //console.log(querySnapshot);
           temp_comments.push(doc);
         });
         querySnapshot._data.likes.forEach((doc) => {
-          //console.log(querySnapshot);
           temp_likes.push(doc);
         });
         setComments(temp_comments);
@@ -52,8 +50,6 @@ const PostScreen = (props) => {
         setLoading(false);
         alert(error);
       });
-
-    setLoading(false);
   };
 
   useEffect(() => {
@@ -103,7 +99,7 @@ const PostScreen = (props) => {
             <Button
               type="outline"
               title="Comment"
-              onPress={function () {
+              onPress={async function () {
                 if (comment != '') {
                   setLoading(true);
                   firebase
@@ -168,7 +164,7 @@ const PostScreen = (props) => {
             data={comments}
             inverted={true}
             scrollsToTop={true}
-            //keyExtractor={(item) => item.commentid}
+            keyExtractor={(item) => item.time.toString()}
             renderItem={({item}) => {
               return (
                 <CommentCard

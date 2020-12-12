@@ -9,6 +9,7 @@ import {Card, Button, Input} from 'react-native-elements';
 import Entypo from 'react-native-vector-icons/Entypo';
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/firestore';
+import {LogBox} from 'react-native';
 
 import PostCard from './../components/PostCard';
 import HeaderHome from './../components/Header';
@@ -45,7 +46,8 @@ const HomeScreen = (props) => {
 
   useEffect(() => {
     loadPosts();
-    //LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+    LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+    LogBox.ignoreLogs(['Possible Unhandled Promise Rejection']);
   }, []);
 
   return (
@@ -87,22 +89,12 @@ const HomeScreen = (props) => {
                     .then((doc) => {
                       setLoading(false);
                       console.log('post created');
-                      alert(doc.id);
+                      alert('Post created. Post id: ' + doc.id);
                     })
                     .catch((error) => {
                       setLoading(false);
                       alert(error);
                     });
-                  /*
-                  let newpost = {
-                    user: auth.CurrentUser,
-                    time: moment().format('DD MMM, YYYY'),
-                    postid:
-                      auth.CurrentUser.email +
-                      moment().format('YYYY-MM-DD hh:mm:ss a'),
-                    body: post,
-                  };
-                  */
                 }
                 input.current.clear();
                 setPost('');
