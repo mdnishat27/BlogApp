@@ -65,7 +65,7 @@ function PostCard(props) {
           activeOpacity={1}
         />
         <Text h4Style={{padding: 10}} h4>
-          {props.author.name}
+          {props.author}
         </Text>
       </View>
       <Text style={{fontStyle: 'italic', fontSize: 10}}> {props.title}</Text>
