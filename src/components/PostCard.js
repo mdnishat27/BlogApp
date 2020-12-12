@@ -11,9 +11,10 @@ import {
   removeData,
   storeDataJSON,
 } from '../functions/AsyncStorageFunctions';
+import firebase from '@react-native-firebase/app';
 
 function PostCard(props) {
-  const [postcomments, setPostComments] = useState([]);
+  const [comments, setComments] = useState([]);
   const [likes, setLikes] = useState([]);
   const [notifications, setNotifications] = useState([]);
   const [islike, setIsLike] = useState(false);
@@ -26,33 +27,37 @@ function PostCard(props) {
   };
 
   const loadComments = async () => {
-    let allcomments = await getDataJSON('Comments');
-    if (allcomments != null) {
-      setPostComments(
-        allcomments.filter((el) => el.postid == props.post.postid),
-      );
-    } else {
-      setPostComments([]);
-    }
-  };
-
-  const loadLikes = async () => {
-    let alllikes = await getDataJSON('Likes-' + props.post.postid);
-    if (alllikes != null) {
-      setLikes(alllikes);
-      if (alllikes.some((item) => item.person == props.user.email)) {
-        setIsLike(true);
-        setIconname('like1');
-      }
-    } else {
-      //setLikes([]);
-    }
+    firebase
+      .firestore()
+      .collection('posts')
+      .doc(props.id)
+      //.orderBy('time', 'desc')
+      .onSnapshot((querySnapshot) => {
+        let temp_comments = [];
+        let temp_likes = [];
+        querySnapshot._data.comments.forEach((doc) => {
+          //console.log(querySnapshot);
+          temp_comments.push(doc);
+        });
+        querySnapshot._data.likes.forEach((doc) => {
+          //console.log(querySnapshot);
+          temp_likes.push(doc);
+          if (doc.userid == props.user.uid) {
+            setIsLike(true);
+            setIconname('like1');
+          }
+        });
+        setComments(temp_comments);
+        setLikes(temp_likes);
+      })
+      .catch((error) => {
+        alert(error);
+      });
   };
 
   useEffect(() => {
     //loadNotifications();
-    //loadComments();
-    //loadLikes();
+    loadComments();
   }, [isVisible]);
 
   return (
@@ -82,28 +87,28 @@ function PostCard(props) {
           type="outline"
           title={'  Like (' + likes.length + ')'}
           icon={<AntDesign name={iconname} size={24} color="dodgerblue" />}
-          /*
           onPress={async function () {
             if (islike) {
               setIsLike(false);
               setIconname('like2');
-              let newlikes = [];
-              for (let obj of likes) {
-                if (obj.person == props.user.email) {
-                } else {
-                  newlikes.push(obj);
-                }
-              }
-              //console.log('new likes : ');
-              //console.log(newlikes);
-              if (newlikes.length > 0) {
-                setLikes(newlikes);
-                storeDataJSON('Likes-' + props.post.postid, newlikes);
-              } else {
-                //console.log('2');
-                setLikes([]);
-                removeData('Likes-' + props.post.postid);
-              }
+              firebase
+                .firestore()
+                .collection('posts')
+                .doc(props.id)
+                .update({
+                  likes: firebase.firestore.FieldValue.arrayRemove({
+                    userid: props.user.uid,
+                    username: props.user.displayName,
+                  }),
+                })
+                .then(() => {
+                  console.log('unliked');
+                })
+                .catch((error) => {
+                  alert(error);
+                });
+              /*
+
               const id = uuid();
               let newnotification = {
                 notificationid: id,
@@ -120,21 +125,28 @@ function PostCard(props) {
                 setNotifications([...notifications, newnotification]);
                 addDataJSON('Notifications', newnotification);
               }
-              //console.log(likes);
+              //console.log(likes);*/
             } else {
               setIsLike(true);
               setIconname('like1');
-              let likeobject = {
-                person: props.user.email,
-              };
-              //console.log(likes);
-              if (likes.length == 0) {
-                setLikes([likeobject]);
-                storeDataJSON('Likes-' + props.post.postid, [likeobject]);
-              } else {
-                setLikes([...likes, likeobject]);
-                addDataJSON('Likes-' + props.post.postid, likeobject);
-              }
+              firebase
+                .firestore()
+                .collection('posts')
+                .doc(props.id)
+                .update({
+                  likes: firebase.firestore.FieldValue.arrayUnion({
+                    userid: props.user.uid,
+                    username: props.user.displayName,
+                  }),
+                })
+                .then(() => {
+                  console.log('liked');
+                })
+                .catch((error) => {
+                  alert(error);
+                });
+              /*
+
               const id = uuid();
               let newnotification = {
                 notificationid: id,
@@ -151,14 +163,16 @@ function PostCard(props) {
                 setNotifications([...notifications, newnotification]);
                 addDataJSON('Notifications', newnotification);
               }
+
+               */
               //console.log(likes);
               //console.log(likeobject);
             }
-          }}*/
+          }}
         />
         <Button
           type="solid"
-          title={'  Comment  (' + postcomments.length + ')  '}
+          title={'  Comment  (' + comments.length + ')  '}
           onPress={function () {
             //console.log(props.post);
             props.navigation.navigate('Post', props.post);

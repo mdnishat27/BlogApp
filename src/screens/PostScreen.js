@@ -8,9 +8,7 @@ import {
 } from 'react-native';
 import {Text, Card, Button, Avatar, Input} from 'react-native-elements';
 import Entypo from 'react-native-vector-icons/Entypo';
-import moment from 'moment';
 import {SafeAreaView} from 'react-native-safe-area-context';
-import uuid from 'uuid-random';
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/firestore';
 
@@ -31,7 +29,6 @@ const PostScreen = (props) => {
   const [comments, setComments] = useState([]);
   const [likes, setLikes] = useState([]);
   const [notifications, setNotifications] = useState([]);
-  const [postcomments, setPostComments] = useState([]);
   const [loading, setLoading] = useState(false);
   const input = React.createRef();
 
@@ -44,11 +41,17 @@ const PostScreen = (props) => {
       //.orderBy('time', 'desc')
       .onSnapshot((querySnapshot) => {
         let temp_comments = [];
+        let temp_likes = [];
         querySnapshot._data.comments.forEach((doc) => {
           //console.log(querySnapshot);
           temp_comments.push(doc);
         });
+        querySnapshot._data.likes.forEach((doc) => {
+          //console.log(querySnapshot);
+          temp_likes.push(doc);
+        });
         setComments(temp_comments);
+        setLikes(temp_likes);
         setLoading(false);
       })
       .catch((error) => {
