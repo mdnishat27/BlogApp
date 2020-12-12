@@ -78,6 +78,7 @@ const SignUpScreen = (props) => {
                         name: Name,
                         sid: SID,
                         email: Email,
+                        notifications: [],
                       })
                       .then(() => {
                         setIsLoading(false);

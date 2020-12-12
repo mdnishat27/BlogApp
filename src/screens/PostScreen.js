@@ -15,24 +15,18 @@ import '@react-native-firebase/firestore';
 import {AuthContext} from '../providers/AuthProvider';
 import HeaderHome from './../components/Header';
 import CommentCard from '../components/CommentCard';
-import {
-  addDataJSON,
-  getDataJSON,
-  storeDataJSON,
-} from '../functions/AsyncStorageFunctions';
 
 const PostScreen = (props) => {
   //console.log('props');
-  //console.log(props.route.params.data);
+  //console.log(props.route.params);
   let info = props.route.params;
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState([]);
   const [likes, setLikes] = useState([]);
-  const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
   const input = React.createRef();
 
-  const loadComments = async () => {
+  const loadLikesComments = async () => {
     setLoading(true);
     firebase
       .firestore()
@@ -62,23 +56,8 @@ const PostScreen = (props) => {
     setLoading(false);
   };
 
-  const loadNotifications = async () => {
-    let allnotifications = await getDataJSON('Notifications');
-    setNotifications(allnotifications);
-  };
-  const loadLikes = async () => {
-    let alllikes = await getDataJSON('Likes-' + info.postid);
-    if (alllikes != null) {
-      setLikes(alllikes);
-    } else {
-    }
-    setLoading(false);
-  };
-
   useEffect(() => {
-    loadComments();
-    //loadNotifications();
-    //loadLikes();
+    loadLikesComments();
   }, []);
 
   return (
@@ -147,48 +126,32 @@ const PostScreen = (props) => {
                       setLoading(false);
                       alert(error);
                     });
-                  /*
-                  const commentid = uuid();
-                  let newcomment = {
-                    postid: info.postid,
-                    commentid: commentid,
-                    user: auth.CurrentUser,
-                    time: moment().format('DD MMM, YYYY'),
-                    body: comment,
-                  };
-
-                  const id = uuid();
-                  let newnotification = {
-                    notificationid: id,
-                    type: 'comment',
-                    author: auth.CurrentUser,
-                    postid: info.postid,
-                    postauthor: info.user,
-                    text: auth.CurrentUser.name,
-                  };
-                  if (postcomments == undefined) {
-                    setPostComments([newcomment]);
-                  } else {
-                    setPostComments([...postcomments, newcomment]);
+                  //console.log(info.data.userId);
+                  //console.log(auth.CurrentUser.uid);
+                  if (auth.CurrentUser.uid != info.data.userId) {
+                    setLoading(true);
+                    firebase
+                      .firestore()
+                      .collection('users')
+                      .doc(info.data.userId)
+                      .update({
+                        notifications: firebase.firestore.FieldValue.arrayUnion(
+                          {
+                            type: 'comment',
+                            postid: info.id,
+                            text: auth.CurrentUser.displayName,
+                          },
+                        ),
+                      })
+                      .then(() => {
+                        setLoading(false);
+                        console.log('notification created');
+                      })
+                      .catch((error) => {
+                        setLoading(false);
+                        alert(error);
+                      });
                   }
-                  //console.log(newnotification);
-                  //console.log(newcomment);
-                  if (comments == undefined) {
-                    setComments([newcomment]);
-                    storeDataJSON('Comments', [newcomment]);
-                  } else {
-                    setComments([...comments, newcomment]);
-                    addDataJSON('Comments', newcomment);
-                  }
-
-                  if (notifications == undefined) {
-                    setNotifications([newnotification]);
-                    storeDataJSON('Notifications', [newnotification]);
-                  } else {
-                    setNotifications([...notifications, newnotification]);
-                    addDataJSON('Notifications', newnotification);
-                  }
-                  */
                 }
                 input.current.clear();
                 setComment('');

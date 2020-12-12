@@ -1,20 +1,30 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 import {Card, Text, Avatar} from 'react-native-elements';
-import {getDataJSON} from '../functions/AsyncStorageFunctions';
+import firebase from '@react-native-firebase/app';
+import '@react-native-firebase/firestore';
 
 function NotificationCard(props) {
   const [post, setPost] = useState('');
+
   //console.log(props);
   const loadPost = async () => {
-    let allpost = await getDataJSON('Posts');
-    for (let a of allpost) {
-      if (a.postid == props.postid) {
-        setPost(a);
-        break;
-      }
-    }
+    firebase
+      .firestore()
+      .collection('posts')
+      .doc(props.postid)
+      .onSnapshot((querySnapshot) => {
+        let data = {
+          data: querySnapshot._data,
+          id: props.postid,
+        };
+        setPost(data);
+      })
+      .catch((error) => {
+        alert(error);
+      });
   };
+
   useEffect(() => {
     loadPost();
   }, []);
