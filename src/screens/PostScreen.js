@@ -11,6 +11,8 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import moment from 'moment';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import uuid from 'uuid-random';
+import firebase from '@react-native-firebase/app';
+import '@react-native-firebase/firestore';
 
 import {AuthContext} from '../providers/AuthProvider';
 import HeaderHome from './../components/Header';
@@ -23,7 +25,7 @@ import {
 
 const PostScreen = (props) => {
   //console.log('props');
-  //console.log(props);
+  //console.log(props.route.params.data);
   let info = props.route.params;
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState([]);
@@ -35,13 +37,26 @@ const PostScreen = (props) => {
 
   const loadComments = async () => {
     setLoading(true);
-    let allcomments = await getDataJSON('Comments');
-    setComments(allcomments);
-    if (allcomments != null) {
-      setPostComments(allcomments.filter((el) => el.postid == info.postid));
-    } else {
-      setPostComments([]);
-    }
+    firebase
+      .firestore()
+      .collection('posts')
+      .doc(info.id)
+      //.orderBy('time', 'desc')
+      .onSnapshot((querySnapshot) => {
+        let temp_comments = [];
+        querySnapshot._data.comments.forEach((doc) => {
+          //console.log(querySnapshot);
+          temp_comments.push(doc);
+        });
+        setComments(temp_comments);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setLoading(false);
+        alert(error);
+      });
+
+    setLoading(false);
   };
 
   const loadNotifications = async () => {
@@ -59,8 +74,8 @@ const PostScreen = (props) => {
 
   useEffect(() => {
     loadComments();
-    loadNotifications();
-    loadLikes();
+    //loadNotifications();
+    //loadLikes();
   }, []);
 
   return (
@@ -81,17 +96,17 @@ const PostScreen = (props) => {
                 activeOpacity={1}
               />
               <Text h4Style={{padding: 10}} h4>
-                {info.user.name}
+                {info.data.user}
               </Text>
             </View>
             <Text style={{fontStyle: 'italic', fontSize: 12}}>
               {'  '}
-              Posted on {info.time}
+              Posted on {new Date(info.data.time.toDate()).toString()}
             </Text>
-            <Text style={styles.textstyle}>{info.body}</Text>
+            <Text style={styles.textstyle}>{info.data.body}</Text>
             <Card.Divider />
             <Text style={{paddingBottom: 7}}>
-              {likes.length} Likes, {postcomments.length} Comments.
+              {likes.length} Likes, {comments.length} Comments.
             </Text>
             <Card.Divider />
             <Input
@@ -108,6 +123,28 @@ const PostScreen = (props) => {
               title="Comment"
               onPress={function () {
                 if (comment != '') {
+                  setLoading(true);
+                  firebase
+                    .firestore()
+                    .collection('posts')
+                    .doc(info.id)
+                    .update({
+                      comments: firebase.firestore.FieldValue.arrayUnion({
+                        userid: auth.CurrentUser.uid,
+                        username: auth.CurrentUser.displayName,
+                        time: firebase.firestore.Timestamp.now(),
+                        body: comment,
+                      }),
+                    })
+                    .then(() => {
+                      setLoading(false);
+                      console.log('comment created');
+                    })
+                    .catch((error) => {
+                      setLoading(false);
+                      alert(error);
+                    });
+                  /*
                   const commentid = uuid();
                   let newcomment = {
                     postid: info.postid,
@@ -116,6 +153,7 @@ const PostScreen = (props) => {
                     time: moment().format('DD MMM, YYYY'),
                     body: comment,
                   };
+
                   const id = uuid();
                   let newnotification = {
                     notificationid: id,
@@ -147,6 +185,7 @@ const PostScreen = (props) => {
                     setNotifications([...notifications, newnotification]);
                     addDataJSON('Notifications', newnotification);
                   }
+                  */
                 }
                 input.current.clear();
                 setComment('');
@@ -158,16 +197,19 @@ const PostScreen = (props) => {
               animating={loading}
             />
           </SafeAreaView>
+
           <FlatList
-            data={postcomments}
+            data={comments}
             inverted={true}
             scrollsToTop={true}
-            keyExtractor={(item) => item.commentid}
+            //keyExtractor={(item) => item.commentid}
             renderItem={({item}) => {
               return (
                 <CommentCard
-                  name={item.user.name}
-                  time={'Commented on ' + item.time}
+                  name={item.username}
+                  time={
+                    'Commented on ' + new Date(item.time.toDate()).toString()
+                  }
                   comment={item.body}
                 />
               );

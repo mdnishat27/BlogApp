@@ -9,17 +9,10 @@ import {Card, Button, Input} from 'react-native-elements';
 import Entypo from 'react-native-vector-icons/Entypo';
 import firebase from '@react-native-firebase/app';
 import '@react-native-firebase/firestore';
-import moment from 'moment';
-import {LogBox} from 'react-native';
 
 import PostCard from './../components/PostCard';
 import HeaderHome from './../components/Header';
 import {AuthContext} from '../providers/AuthProvider';
-import {
-  getDataJSON,
-  storeDataJSON,
-  addDataJSON,
-} from '../functions/AsyncStorageFunctions';
 
 const HomeScreen = (props) => {
   const [posts, setPosts] = useState([]);
@@ -48,10 +41,6 @@ const HomeScreen = (props) => {
         setLoading(false);
         alert(error);
       });
-    //let allpost = await getDataJSON('Posts');
-    //setPosts(allpost);
-
-    //setLoading(false);
   };
 
   useEffect(() => {
@@ -91,17 +80,14 @@ const HomeScreen = (props) => {
                       userId: auth.CurrentUser.uid,
                       user: auth.CurrentUser.displayName,
                       time: firebase.firestore.Timestamp.now(),
-                      //postid:
-                      //auth.CurrentUser.email +
-                      //moment().format('YYYY-MM-DD hh:mm:ss a'),
                       body: post,
                       likes: [],
                       comments: [],
                     })
-                    .then(() => {
+                    .then((doc) => {
                       setLoading(false);
                       console.log('post created');
-                      alert(auth.CurrentUser.uid);
+                      alert(doc.id);
                     })
                     .catch((error) => {
                       setLoading(false);
@@ -116,13 +102,6 @@ const HomeScreen = (props) => {
                       moment().format('YYYY-MM-DD hh:mm:ss a'),
                     body: post,
                   };
-                  if (posts == undefined) {
-                    setPosts([newpost]);
-                    storeDataJSON('Posts', [newpost]);
-                  } else {
-                    setPosts([...posts, newpost]);
-                    addDataJSON('Posts', newpost);
-                  }
                   */
                 }
                 input.current.clear();
@@ -138,18 +117,16 @@ const HomeScreen = (props) => {
           <>
             <FlatList
               data={posts}
-              //inverted={true}
-              //scrollsToTop={true}
-              //keyExtractor={(item) => item.postid}
               renderItem={({item}) => {
                 return (
                   <PostCard
+                    id={item.id}
                     user={auth.CurrentUser}
                     author={item.data.user}
                     title={'Posted on ' + item.data.time.toDate()}
                     body={item.data.body}
                     navigation={props.navigation}
-                    post={item.data}
+                    post={item}
                   />
                 );
               }}

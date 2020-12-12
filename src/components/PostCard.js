@@ -50,9 +50,9 @@ function PostCard(props) {
   };
 
   useEffect(() => {
-    loadNotifications();
-    loadComments();
-    loadLikes();
+    //loadNotifications();
+    //loadComments();
+    //loadLikes();
   }, [isVisible]);
 
   return (
@@ -82,6 +82,7 @@ function PostCard(props) {
           type="outline"
           title={'  Like (' + likes.length + ')'}
           icon={<AntDesign name={iconname} size={24} color="dodgerblue" />}
+          /*
           onPress={async function () {
             if (islike) {
               setIsLike(false);
@@ -153,7 +154,7 @@ function PostCard(props) {
               //console.log(likes);
               //console.log(likeobject);
             }
-          }}
+          }}*/
         />
         <Button
           type="solid"
